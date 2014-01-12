@@ -75,6 +75,8 @@ Device.prototype.write = function(dataRcvd) {
 			});
 		}, timeToLeaveButtonPressed);
 	});
+	// *** TODO: update state to off when done here (just so it always shows off)
+	// *** also getting error (client disconnedcted) when this function is called...
 };	
 
 Driver.prototype.config = function(rpc,cb) {
