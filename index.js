@@ -49,6 +49,7 @@ function Device(app) {
 };
 
 Device.prototype.write = function(dataRcvd) {
+	this._app = app;
 	app.log.info("garageDoorBtn received data; executing button press on raspberry pi BCM GPIO pin " + pinNo);
 	var cmdToSetPinHigh = "gpio -g write " + pinNo + " 1";
 	var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
