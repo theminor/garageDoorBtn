@@ -75,5 +75,9 @@ Device.prototype.write = function(dataRcvd) {
 		}, timeToLeaveButtonPressed);
 	});
 };	
-	
+
+Driver.prototype.config = function(rpc,cb) {
+	// *** TODO: add config window to configure pinNo and timeToLeaveButtonPressed
+}
+
 module.exports = Driver;
