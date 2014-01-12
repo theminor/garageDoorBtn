@@ -45,7 +45,7 @@ function Device(app) {
 	var setOutCmd = "gpio -g mode " + pinNo + " out";
 	exec(setOutCmd, function(error, stdout, stderr) {
 		app.log.info("garageDoorBtn set raspberry pi BCM GPIO pin " + pinNo + " as output. Executed command : " + setOutCmd + " -- result : " + stdout);
-	)};
+	});
 };
 
 Device.prototype.write = function(dataRcvd) {
