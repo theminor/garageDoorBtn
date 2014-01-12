@@ -39,7 +39,7 @@ function Device(app) {
 	this.writeable = true;
 	this.readable = false;
 	this.V = 0;
-	this.D = 244;  // Device ID 244 is generic state device
+	this.D = 238;  // Device ID 238 is "relay" -- ID 206 is "switch actuator"
 	this.G = "garageDoorBtn";
 	this.name = "garageDoorBtn";
 	var setOutCmd = "gpio -g mode " + pinNo + " out";
@@ -77,4 +77,3 @@ Device.prototype.write = function(dataRcvd) {
 };	
 	
 module.exports = Driver;
-
