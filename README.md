@@ -1,7 +1,7 @@
 garageDoorBtn
 =============
 
-Driver for Ninja Blocks to interface with a gpio pin on the raspberry pi to be connected to a relay that attaches to your garage door. Actuating data to the driver (any actuate data can be sent) simulates pressing the garage door button by setting the gpio pin high for a short time (activating your relay), then back low.
+Driver for Ninja Blocks to interface with a gpio pin on the raspberry pi to be connected to a relay that attaches to your garage door. Actuating data to the driver (data must be "1") simulates pressing the garage door button by setting the gpio pin high for a short time (activating your relay), then back low.
 
 Basically, the idea is to connect a relay circuit to your raspberry pi, which realy is activated when the chosen raspberry pi pin is set high. The relay is atached to to the "button" circuit on your garage door opener (for example, attach the relay (switch side) in parrallel with the typical "doorbell" style garage button inside your garage. When the garageDoorBtn driver is actuated, it will set the pin high, causing the relay to connect, momentarily simulating pressing the garage door button. After the specified period of time (usually less than a second or so), the relay is "released" via the driver setting the pin back to the "low" state.
 
