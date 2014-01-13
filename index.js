@@ -28,7 +28,7 @@ var timeToLeaveButtonPressed = 750;  // time in milliseconds to leave the garage
 
 function Driver(opts, app) {
 	var self = this;
-	app.on('client::up',function(){
+	app.on('client::up', function(){
 		self.emit('register', new Device(app));
 	});
 };
@@ -49,8 +49,8 @@ function Device(app) {
 };
 
 Device.prototype.write = function(dataRcvd) {
-	this._app = app;
-	app.log.info("garageDoorBtn received data; executing button press on raspberry pi BCM GPIO pin " + pinNo);
+	var app = this._app;
+	app.log.info("garageDoorBtn received data : " + dataRcvd + " -- executing button press on raspberry pi BCM GPIO pin " + pinNo);
 	var cmdToSetPinHigh = "gpio -g write " + pinNo + " 1";
 	var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
 	var cmdToTestPin = "gpio -g read " + pinNo;
@@ -79,8 +79,10 @@ Device.prototype.write = function(dataRcvd) {
 	// *** also getting error (client disconnedcted) when this function is called...
 };	
 
+/*
 Driver.prototype.config = function(rpc,cb) {
 	// *** TODO: add config window to configure pinNo and timeToLeaveButtonPressed
 }
+*/
 
 module.exports = Driver;
