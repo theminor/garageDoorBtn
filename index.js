@@ -72,28 +72,29 @@ Device.prototype.write = function(dataRcvd) {
 			var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
 			var cmdToTestPin = "gpio -g read " + pinNo;
 			exec(cmdToSetPinHigh, function(error, stdout, stderr) { // first set pin to high state
-				setTimeout(function() {  // wait for "timeToLeaveButtonPressed" seconds
-					exec(cmdToTestPin, function(error, stdout, stderr) {  // test to be sure pin is now high
-						if (stdout.trim() == "1") {
-							exec(cmdToSetPinLow, function(error, stdout, stderr) {  // pin was successfully set high, so now set it back low
+				exec(cmdToTestPin, function(error, stdout, stderr) {  // test to be sure pin is now high
+					if (stdout.trim() == "1") {  // pin was successfully set high
+						self.emit('data', 1);													
+						setTimeout(function() {  // wait for "timeToLeaveButtonPressed" seconds
+							exec(cmdToSetPinLow, function(error, stdout, stderr) {  // now set pin back low
 								exec(cmdToTestPin, function(error, stdout, stderr) {  // test pin to be sure it was set back low
-									if (stdout.trim() != "0") {
-										app.log.info("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");
-										self.emit('data', 1);								
-									}
-									else {
+									if (stdout.trim() == "0") {
 										app.log.info("garageDoorBtn successfully set BCM GPIO pin " + pinNo + " high (for " + timeToLeaveButtonPressed + " milliseconds), then low.");
 										self.emit('data', 0);								
+									}
+									else {
+										app.log.info("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");
+										self.emit('data', 1);								
 									};
 								});
 							});
-						}
-						else {  // pin was not successfully set high
-							app.log.info("garageDoorBtn failed to set BCM GPIO pin " + pinNo + " to high state!");	
-							self.emit('data', 0);								
-						};
-					});
-				}, timeToLeaveButtonPressed);
+						}, timeToLeaveButtonPressed);
+					}
+					else {  // pin was not successfully set high
+						app.log.info("garageDoorBtn failed to set BCM GPIO pin " + pinNo + " to high state!");	
+						self.emit('data', 0);								
+					}				
+				});
 			});
 		}
 		else {
