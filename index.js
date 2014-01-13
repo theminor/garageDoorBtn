@@ -65,35 +65,40 @@ function initialSet(app) {
 Device.prototype.write = function(dataRcvd) {
 	var app = this._app;
 	var self = this;
-	if (pinNo && timeToLeaveButtonPressed) {	
-		app.log.info("garageDoorBtn received data : " + dataRcvd + " -- executing button press on raspberry pi BCM GPIO pin " + pinNo);
-		var cmdToSetPinHigh = "gpio -g write " + pinNo + " 1";
-		var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
-		var cmdToTestPin = "gpio -g read " + pinNo;
-		exec(cmdToSetPinHigh, function(error, stdout, stderr) { // first set pin to high state
-			setTimeout(function() {  // wait for "timeToLeaveButtonPressed" seconds
-				exec(cmdToTestPin, function(error, stdout, stderr) {  // test to be sure pin is now high
-					if (stdout.trim() == "1") {
-						exec(cmdToSetPinLow, function(error, stdout, stderr) {  // pin was successfully set high, so now set it back low
-							exec(cmdToTestPin, function(error, stdout, stderr) {  // test pin to be sure it was set back low
-								if (stdout.trim() != "0") {
-									app.log.info("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");
-									self.emit('data', 1);								
-								}
-								else {
-									app.log.info("garageDoorBtn successfully set BCM GPIO pin " + pinNo + " high (for " + timeToLeaveButtonPressed + " milliseconds), then low.");
-									self.emit('data', 0);								
-								};
+	if (pinNo && timeToLeaveButtonPressed) {
+		if (dataRcvd == 1) {
+			app.log.info("garageDoorBtn received data : " + dataRcvd + " -- executing button press on raspberry pi BCM GPIO pin " + pinNo);
+			var cmdToSetPinHigh = "gpio -g write " + pinNo + " 1";
+			var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
+			var cmdToTestPin = "gpio -g read " + pinNo;
+			exec(cmdToSetPinHigh, function(error, stdout, stderr) { // first set pin to high state
+				setTimeout(function() {  // wait for "timeToLeaveButtonPressed" seconds
+					exec(cmdToTestPin, function(error, stdout, stderr) {  // test to be sure pin is now high
+						if (stdout.trim() == "1") {
+							exec(cmdToSetPinLow, function(error, stdout, stderr) {  // pin was successfully set high, so now set it back low
+								exec(cmdToTestPin, function(error, stdout, stderr) {  // test pin to be sure it was set back low
+									if (stdout.trim() != "0") {
+										app.log.info("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");
+										self.emit('data', 1);								
+									}
+									else {
+										app.log.info("garageDoorBtn successfully set BCM GPIO pin " + pinNo + " high (for " + timeToLeaveButtonPressed + " milliseconds), then low.");
+										self.emit('data', 0);								
+									};
+								});
 							});
-						});
-					}
-					else {  // pin was not successfully set high
-						app.log.info("garageDoorBtn failed to set BCM GPIO pin " + pinNo + " to high state!");	
-						self.emit('data', 0);								
-					};
-				});
-			}, timeToLeaveButtonPressed);
-		});
+						}
+						else {  // pin was not successfully set high
+							app.log.info("garageDoorBtn failed to set BCM GPIO pin " + pinNo + " to high state!");	
+							self.emit('data', 0);								
+						};
+					});
+				}, timeToLeaveButtonPressed);
+			});
+		}
+		else {
+			app.log.info("garageDoorBtn received data : " + dataRcvd + " -- was not \"1\" so doing nothing!");
+		}
 	}
 	else { app.log.warn("garageDoorBtn pin and/or time to leave pressed not specified - need to config the driver!"); };
 };	
