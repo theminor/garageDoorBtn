@@ -30,10 +30,8 @@ function Driver(opts, app) {
 	var self = this;
 	this._app = app;
 	this.opts = opts;
-	app.log.info("***opts set***");
 	if (opts.pinNo) pinNo = opts.pinNo;  // ugly way to track these, but it should work for now...    
 	if (opts.timeToLeaveButtonPressed) timeToLeaveButtonPressed = opts.timeToLeaveButtonPressed; 
-	app.log.info("***past if stmnts set***");	
 	app.on('client::up', function(){
 		self.emit('register', new Device(app));
 	});
@@ -143,7 +141,7 @@ Driver.prototype.config = function(rpc, cb) {
 			pinNo = self.opts.pinNo;
 			timeToLeaveButtonPressed = self.opts.timeToLeaveButtonPressed;                        
 			self.save();
-			initialSet(app);
+			initialSet(this._app);
 			cb(null, {
 				"contents": [
 					{ "type": "paragraph", "text": "Configuration was successful!" },
