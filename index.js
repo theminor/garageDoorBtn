@@ -6,7 +6,7 @@ util.inherits(Driver,stream);
 util.inherits(Device,stream);
 
 /*
-pins:
+Raspberry Pi primary Header Pins:
 	GPIO7 - BCMGPIO4 - pin 7
 	GPIO0 - BCMGPIO17 - pin 11
 	GPIO2 - BCMGPIO21 (rev 1) or BCMGPIO22 (rev 2) - pin 13
@@ -15,7 +15,7 @@ pins:
 	GPIO4 - BCMGPIO23 - pin 16
 	GPIO5 - BCMGPIO24 - pin 18
 	GPIO6 - BCMGPIO25 - pin 22
-secondary GPIO connector (rev 2 only):
+Secondary GPIO connector (rev 2 only):
 	GPIO8 - BCMGPIO28 - header pin 3
 	GPIO10 - BCMGPIO30 - header pin 5
 	GPIO9 - BCMGPIO29 - header pin 4
