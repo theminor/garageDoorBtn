@@ -37,7 +37,7 @@ function Device(app) {
 	var self = this;
 	this._app = app;
 	this.writeable = true;
-	this.readable = false;
+	this.readable = true;
 	this.V = 0;
 	this.D = 238;  // Device ID 238 is "relay" -- ID 206 is "switch actuator"
 	this.G = "garageDoorBtn";
@@ -50,6 +50,7 @@ function Device(app) {
 
 Device.prototype.write = function(dataRcvd) {
 	var app = this._app;
+	var self = this;
 	app.log.info("garageDoorBtn received data : " + dataRcvd + " -- executing button press on raspberry pi BCM GPIO pin " + pinNo);
 	var cmdToSetPinHigh = "gpio -g write " + pinNo + " 1";
 	var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
@@ -61,16 +62,19 @@ Device.prototype.write = function(dataRcvd) {
 					exec(cmdToSetPinLow, function(error, stdout, stderr) {  // pin was successfully set high, so now set it back low
 						exec(cmdToTestPin, function(error, stdout, stderr) {  // test pin to be sure it was set back low
 							if (stdout.trim() != "0") {
-								app.log.info("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");	
+								app.log.info("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");
+								self.emit('data', 1);								
 							}
 							else {
-								app.log.info("garageDoorBtn successfully set BCM GPIO pin " + pinNo + " high (for " + timeToLeaveButtonPressed + " milliseconds), then low.");	
+								app.log.info("garageDoorBtn successfully set BCM GPIO pin " + pinNo + " high (for " + timeToLeaveButtonPressed + " milliseconds), then low.");
+								self.emit('data', 0);								
 							};
 						});
 					});
 				}
 				else {  // pin was not successfully set high
 					app.log.info("garageDoorBtn failed to set BCM GPIO pin " + pinNo + " to high state!");	
+					self.emit('data', 0);								
 				};
 			});
 		}, timeToLeaveButtonPressed);
