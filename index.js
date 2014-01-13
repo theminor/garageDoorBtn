@@ -55,7 +55,7 @@ Device.prototype.write = function(dataRcvd) {
 	var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
 	var cmdToTestPin = "gpio -g read " + pinNo;
 	exec(cmdToSetPinHigh, function(error, stdout, stderr) { // first set pin to high state
-		setInterval(function() {  // wait for "timeToLeaveButtonPressed" seconds
+		setTimeout(function() {  // wait for "timeToLeaveButtonPressed" seconds
 			exec(cmdToTestPin, function(error, stdout, stderr) {  // test to be sure pin is now high
 				if (stdout.trim() == "1") {
 					exec(cmdToSetPinLow, function(error, stdout, stderr) {  // pin was successfully set high, so now set it back low
