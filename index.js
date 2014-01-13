@@ -39,7 +39,7 @@ function Device(app) {
 	this.writeable = true;
 	this.readable = false;
 	this.V = 0;
-	this.D = 206;  // Device ID 238 is "relay" -- ID 206 is "switch actuator"
+	this.D = 238;  // Device ID 238 is "relay" -- ID 206 is "switch actuator"
 	this.G = "garageDoorBtn";
 	this.name = "garageDoorBtn";
 	var setOutCmd = "gpio -g mode " + pinNo + " out";
