@@ -28,9 +28,12 @@ var timeToLeaveButtonPressed = undefined;
 
 function Driver(opts, app) {
 	var self = this;
+	this._app = app;
 	this.opts = opts;
+	app.log.info("***opts set***");
 	if (opts.pinNo) pinNo = opts.pinNo;  // ugly way to track these, but it should work for now...    
 	if (opts.timeToLeaveButtonPressed) timeToLeaveButtonPressed = opts.timeToLeaveButtonPressed; 
+	app.log.info("***past if stmnts set***");	
 	app.on('client::up', function(){
 		self.emit('register', new Device(app));
 	});
