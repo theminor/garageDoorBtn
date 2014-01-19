@@ -9,6 +9,9 @@ Requires the wiringPi library to be installed on your raspberry pi. See http://w
 
 References to the raspberry pi pins on the gpio headers are very confusing. This driver uses the BCM GPIO reference for the pins. See http://wiringpi.com/pins/ documentation or "man gpio".
 
+Here is an example widget for the beta dashboard: https://gist.github.com/theminor/8508190
+
+
 <h5>Raspberry Pi Pins:</h5>
 	GPIO7 - BCMGPIO4 - pin 7
 	GPIO0 - BCMGPIO17 - pin 11
