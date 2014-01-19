@@ -54,7 +54,7 @@ function initialSet(app) {
 	if (pinNo) {
 		var setCmd = "gpio -g mode " + pinNo + " out && gpio -g write " + pinNo + " 0";
 		exec(setCmd, function(error, stdout, stderr) {
-			app.log.info("garageDoorBtn set raspberry pi BCM GPIO pin " + pinNo + " as output. Executed command : " + setCmd + " -- result : " + stdout);
+			app.log.debug("garageDoorBtn set raspberry pi BCM GPIO pin " + pinNo + " as output. Executed command : " + setCmd + " -- result : " + stdout);
 			if (stdout.trim() == "") { deviceRef.emit('data', 0); }
 			else { app.log.warn("garageDoorBtn failed initial setting of pin " + pinNo + " to output mode, low state!"); };
 		});
@@ -67,7 +67,7 @@ Device.prototype.write = function(dataRcvd) {
 	var self = this;
 	if (pinNo && timeToLeaveButtonPressed) {
 		if (dataRcvd == 1) {
-			app.log.info("garageDoorBtn received data : " + dataRcvd + " -- executing button press on raspberry pi BCM GPIO pin " + pinNo);
+			app.log.debug("garageDoorBtn received data : " + dataRcvd + " -- executing button press on raspberry pi BCM GPIO pin " + pinNo);
 			var cmdToSetPinHigh = "gpio -g write " + pinNo + " 1";
 			var cmdToSetPinLow = "gpio -g write " + pinNo + " 0";
 			var cmdToTestPin = "gpio -g read " + pinNo;
@@ -79,11 +79,11 @@ Device.prototype.write = function(dataRcvd) {
 							exec(cmdToSetPinLow, function(error, stdout, stderr) {  // now set pin back low
 								exec(cmdToTestPin, function(error, stdout, stderr) {  // test pin to be sure it was set back low
 									if (stdout.trim() == "0") {
-										app.log.info("garageDoorBtn successfully set BCM GPIO pin " + pinNo + " high (for " + timeToLeaveButtonPressed + " milliseconds), then low.");
+										app.log.debug("garageDoorBtn successfully set BCM GPIO pin " + pinNo + " high (for " + timeToLeaveButtonPressed + " milliseconds), then low.");
 										self.emit('data', 0);								
 									}
 									else {
-										app.log.info("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");
+										app.log.debug("garageDoorBtn failed to reset BCM GPIO pin " + pinNo + " back to low state!");
 										self.emit('data', 1);								
 									};
 								});
@@ -91,14 +91,14 @@ Device.prototype.write = function(dataRcvd) {
 						}, timeToLeaveButtonPressed);
 					}
 					else {  // pin was not successfully set high
-						app.log.info("garageDoorBtn failed to set BCM GPIO pin " + pinNo + " to high state!");	
+						app.log.debug("garageDoorBtn failed to set BCM GPIO pin " + pinNo + " to high state!");	
 						self.emit('data', 0);								
 					}				
 				});
 			});
 		}
 		else {
-			app.log.info("garageDoorBtn received data : " + dataRcvd + " -- was not \"1\" so doing nothing!");
+			app.log.debug("garageDoorBtn received data : " + dataRcvd + " -- was not \"1\" so doing nothing!");
 		}
 	}
 	else { app.log.warn("garageDoorBtn pin and/or time to leave pressed not specified - need to config the driver!"); };
@@ -107,7 +107,7 @@ Device.prototype.write = function(dataRcvd) {
 Driver.prototype.config = function(rpc, cb) {
 	var self = this;
 	if (!rpc) {
-		this._app.log.info("garageDoorBtn main config window called");
+		this._app.log.debug("garageDoorBtn main config window called");
 		return cb(null, {        // main config window
 			"contents":[
 				{ "type": "paragraph", "text": "The garageDoorBtn driver simply sets the specified raspberry pi bcm gpio pin to the \"high\" state momentarily, then sets it back to the \"low\" state. The idea is that you can attach a simple relay circuit via this pin and hook the relay to your garage door, which will simulate pressing the garage door button. So you can use this driver to open and close your garage door. Enter the settings below to get started, and please make sure you get a confirmation message after hitting \"Submit\" below. (You may have to click it a couple of times. If you don't get a confirmation message, the settings did not update!)"},
@@ -120,7 +120,7 @@ Driver.prototype.config = function(rpc, cb) {
 		});
 	}
 	else if (rpc.method == "submt") {
-		this._app.log.info("garageDoorBtn config window submitted. Checking for errors..");
+		this._app.log.debug("garageDoorBtn config window submitted. Checking for errors..");
 		var intRegex = /^\d+$/; // corresponds to a positive integer
 		if (!((intRegex.test(rpc.params.pin_no)) && (rpc.params.pin_no > 0) && (rpc.params.pin_no <= 31))) {  // must be an interger 1-31
 			cb(null, {
@@ -141,7 +141,7 @@ Driver.prototype.config = function(rpc, cb) {
 			return;                                
 		}
 		else {  // looks like the submitted values were valid, so update
-			this._app.log.info("garageDoorBtn - submitted config appears valid. Updating settings...");
+			this._app.log.debug("garageDoorBtn - submitted config appears valid. Updating settings...");
 			self.opts.pinNo = rpc.params.pin_no;
 			self.opts.timeToLeaveButtonPressed = rpc.params.button_time; // also need this in milliseconds                        
 			pinNo = self.opts.pinNo;
@@ -157,7 +157,7 @@ Driver.prototype.config = function(rpc, cb) {
 		};        
 	}
 	else {
-		this._app.log.info("garageDoorBtn - Unknown rpc method was called!");
+		this._app.log.warn("garageDoorBtn - Unknown rpc method was called!");
 	};
 };
 
